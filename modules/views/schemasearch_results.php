@@ -40,14 +40,15 @@
 window.title = "<?php echo __('Schema Search Results'); ?>";
 $(function() {
 	var m;
+	var max_results = 3;
 	var search = "<?php echo htmlspecialchars($data['filter']);  ?>";
 	$('#table_grid tr td:nth-child(3) pre').each(function() {
 		output = '';
-		re = new RegExp("(.{0,20}" + search + ".{0,20})", "gi");
+		re = new RegExp("(.{0,30}" + search + ".{0,30})", "gi");
 		m = $(this).html().match(re);
 	 	for (var i = 0; i < m.length; i++) {
-	 		if (i > 4) {
-	 			output += "...</br>(" + (m.length - 5) + " more) ...";
+	 		if (i > max_results - 1) {
+	 			output += "...</br>(" + (m.length - max_results) + " more) ...";
 	 			break;
 	 		}
 	 		output += "..." + m[i].replace(search, "<strong style='font-weight:700'>" + search + "</strong>") + "...</br>";

@@ -24,9 +24,6 @@
                         <tr><td valign="top">
                         <input type='checkbox' name='object_type[]' value="views" id='ddl_views' /><label class="right" for='ddl_views'><?php echo __('View definitions'); ?></label>
                         </td></tr>
-                        <tr><td valign="top">
-                        <input type='checkbox' name='object_type[]' value="tables" id='ddl_tables' /><label class="right" for='ddl_tables'><?php echo __('Table definitions'); ?></label>
-                        </td></tr>
                     </table>
             </fieldset>
             </td>

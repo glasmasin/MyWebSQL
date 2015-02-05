@@ -2,7 +2,7 @@
 /**
  * This file is a part of MyWebSQL package
  *
- * @file:      modules/search.php
+ * @file:      modules/schemasearch.php
  * @author     Samnan ur Rehman
  * @copyright  (c) 2008-2014 Samnan ur Rehman
  * @web        http://mywebsql.net
