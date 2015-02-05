@@ -283,6 +283,10 @@ function toolsDbSearch() {
 	taskbar.openDialog("tools-search", "?q=wrkfrm&type=search", 620, 450);
 }
 
+function toolsSchemaSearch() {
+	taskbar.openDialog("tools-schema-search", "?q=wrkfrm&type=schemasearch", 820, 450);
+}
+
 function toolsUsers() {
 	taskbar.openDialog("tools-users", "?q=wrkfrm&type=usermanager", 620, 440);
 }

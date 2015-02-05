@@ -42,6 +42,7 @@
 				<li class="option mysql4 mysql5 mysqli"><a class="itusr" href="javascript:toolsUsers()" title="<?php echo __('Manage database users'); ?>"><?php echo __('User Manager'); ?></a></li>
 				<li class="db option mysql4 mysql5 pgsql mysqli"><a class="itchk" href="javascript:toolsDbCheck()" title="<?php echo __('Analyze and repair database tables'); ?>"><?php echo __('Repair Tables'); ?></a></li>
 				<li class="db option mysql4 mysql5 mysqli pgsql sqlite sqlite3"><a class="itsrch" href="javascript:toolsDbSearch()" title="<?php echo __('Search for text in the database'); ?>"><?php echo __('Search in Database'); ?></a></li>
+				<li class="db option pgsql"><a class="itsrch" href="javascript:toolsSchemaSearch()" title="<?php echo __('Search in database schema'); ?>"><?php echo __('Search in Schema'); ?></a></li>
 				<li><a class="itopts" href="javascript:toolsOptions()" title="<?php echo __('Configure application options'); ?>"><?php echo __('Options'); ?></a></li>
 			</ul>
 		</li>
