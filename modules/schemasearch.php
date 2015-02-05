@@ -34,5 +34,5 @@ function searchDatabase(&$db) {
     $message = str_replace('{{KEYWORD}}', "&quot;" . htmlspecialchars($_POST['keyword']) .
         "&quot;", __('Search results for {{KEYWORD}} in the database schema'));
     $replace = array('MESSAGE' => $message);
-    echo view('schema_search_results', $replace, $data);
+    echo view('schemasearch_results', $replace, $data);
 }
