@@ -464,7 +464,7 @@ class DB_Pgsql {
 
 		$this->getFieldMetaInfo($fields, $tables);
 		$this->getFieldConstraints($fields, $tables);
-		
+
 		return $fields;
 	}
 
@@ -869,7 +869,7 @@ class DB_Pgsql {
 	}
 
 	protected function getFieldConstraints(&$fields, $tables) {
-		$sql = "select c.contype as type, ns1.nspname as schema, r1.relname as table, f1.attname as field
+		$sql = "SELECT c.contype as type, ns1.nspname as schema, r1.relname as table, f1.attname as field
 			FROM
 		   pg_catalog.pg_constraint AS c
 		   JOIN pg_catalog.pg_class AS r1 ON (c.conrelid=r1.oid)
@@ -905,29 +905,64 @@ class DB_Pgsql {
 		}
 	}
 
-	protected function getCreateCommandForView( $name )
+	protected function getCreateCommandForView($fullname)
 	{
-		list($schema, $name) = $this->splitObjectName( $name );
+		list($schema, $name) = $this->splitObjectName($fullname);
 		$sql = "SELECT c.relname, n.nspname, pg_catalog.pg_get_userbyid(c.relowner) AS relowner,
 			pg_catalog.pg_get_viewdef(c.oid, true) AS createcmd,
 			pg_catalog.obj_description(c.oid, 'pg_class') AS comments
 			FROM pg_catalog.pg_class c
 			LEFT JOIN pg_catalog.pg_namespace n ON (n.oid = c.relnamespace)
-			WHERE (c.relname = '" . $this->escape($name) . "') AND n.nspname='" . $this->escape( $schema ) . "'";
+			WHERE c.relname = '{$this->escape($name)}' AND n.nspname='{$this->escape($schema)}'";
 
-		if (!$this->query($sql, '_temp') || $this->numRows('_temp') == 0)
+		if (!$this->query($sql, '_temp') || $this->numRows('_temp') == 0) {
 			return '';
+		}
 
 		$row = $this->fetchRow('_temp');
-		$cmd = 'CREATE VIEW ' . $this->quote( $row['nspname'] . '.' . $row['relname'] ) . " AS \n"
-				. $row['createcmd'];
+		$cmd = "CREATE VIEW {$this->quote($fullname)} AS
+			 {$row['createcmd']}";
 
 		if ($row['comments'] != '') {
-			$cmd = "BEGIN; \n" . $cmd . "\nCOMMENT ON VIEW " . $this->quote( $row['nspname'] . '.' . $row['relname'] ) . " IS '" . $this->escape($row['comments']) . "';\nEND;";
+			$cmd = "BEGIN; \n$cmd\nCOMMENT ON VIEW {$this->quote($fullname)} IS '{$this->escape($row['comments'])}';\nEND;";
 		}
 
 		return $cmd;
 	}
 
+	protected function getCreateCommandForFunction($fullname)
+	{
+		list($schema, $name) = $this->splitObjectName($fullname);
+		$sql = "SELECT pg_get_functiondef(p.oid) AS definition
+                FROM pg_proc p
+                    INNER JOIN pg_namespace n ON p.pronamespace = n.oid
+                WHERE p.proname = '{$this->escape($name)}' AND n.nspname='{$this->escape($schema)}'";
+
+		if (!$this->query($sql, '_temp') || $this->numRows('_temp') == 0) {
+			return '';
+		}
+
+		$row = $this->fetchRow('_temp');
+		return $row['definition'];
+	}
+
+	protected function getCreateCommandForTrigger($fullname)
+	{
+		list($schema, $name) = $this->splitObjectName($fullname);
+
+		$sql = "SELECT pg_get_triggerdef(t.oid, true) AS definition
+			    FROM pg_trigger t
+			        INNER JOIN pg_class c ON t.tgrelid = c.oid
+			        INNER JOIN pg_namespace n ON c.relnamespace = n.oid
+                WHERE t.tgname = '{$this->escape($name)}' AND n.nspname='{$this->escape($schema)}'";
+
+		if (!$this->query($sql, '_temp') || $this->numRows('_temp') == 0) {
+			return '';
+		}
+
+		$row = $this->fetchRow('_temp');
+		$command = preg_replace('( AFTER | BEFORE | FOR EACH ROW)', "\n$0", $row['definition']);
+		return $command;
+	}
+
 }
-?>
