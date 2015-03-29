@@ -117,7 +117,7 @@ function querySave() {
 		editCols = $(this).find('td.x');
 		editCols.each(function() {
 			data = $(this).data('edit');
-			f = getFieldName($(this).index()-2);				
+			f = getFieldName($(this).index()-2);
 			if (newRecord) {
 				if (typeof data != "object") {
 					data = {'setNull':true, 'value':''};
@@ -172,7 +172,7 @@ function queryAddRecord() {
 	row.find('td.edit').bind(editOptions.editEvent, editOptions.editFunc);
 	row.find('input').click(function() { showNavBtn('delete', 'gensql'); });
 	$('#dataTable tbody').append(row);
-	$(".ui-layout-data-center").tabs('select', 0);
+	$(".ui-layout-data-center").tabs("option", "active", 0);
 	setTimeout(function() { bottom = $("#results-div").prop("scrollHeight"); $("#results-div").prop("scrollTop", bottom);}, 50);
 }
 
@@ -212,7 +212,7 @@ function queryCopyRecord() {
 	showNavBtn('update', 'gensql');
 	// select the last row to have some visual indication of what happened
 	row.trigger('click');
-	$(".ui-layout-data-center").tabs('select', 0);
+	$(".ui-layout-data-center").tabs("option", "active", 0);
 	setTimeout(function() { bottom = $("#results-div").prop("scrollHeight"); $("#results-div").prop("scrollTop", bottom);}, 50);
 }
 
@@ -255,7 +255,7 @@ function transferResultMessage(num, tm, msg) {
 	$("#messages-div").html(getResults(1));
 	document.getElementById("timeCounter").innerHTML = tm;
 
-	$(".ui-layout-data-center").tabs('select', 1);
+	$(".ui-layout-data-center").tabs("option", "active", 1);
 	$("#messages-div").prop("scrollTop", 0).prop("scrollLeft", 0);
 
 	if (commandEditor.canHighlight()) {
@@ -280,7 +280,7 @@ function transferInfoMessage() {
 	$("#info-div .message").clone().prependTo("#tab-info");
 	$("#info-div .message").remove();
 
-	$(".ui-layout-data-center").tabs('select', 2);
+	$(".ui-layout-data-center").tabs("option", "active", 2);
 	$("#info-div").attr("scrollTop", 0).prop("scrollLeft", 0);
 
 	if (commandEditor.canHighlight()) {
@@ -304,7 +304,7 @@ function transferInfoMessage() {
 		$("#infoTable").setSearchFilter( $(this).val() );
 		resizeTableHeader('info');
 	});
-		
+
 	resizeTableHeader('info');
 }
 
@@ -326,9 +326,9 @@ function transferResultGrid(num, tm, msg) {
 	if(num > 0)
 		setupResults();
 
-	$(".ui-layout-data-center").tabs('select', 0);
+	$(".ui-layout-data-center").tabs("option", "active", 0);
 	$("#results-div").prop("scrollTop", 0).prop("scrollLeft", 0);
-		
+
 
 
 	if (totalPages > 1) {
@@ -346,7 +346,7 @@ function transferResultGrid(num, tm, msg) {
 
 	setPageStatus(false);
 	editTableName == "" ? showNavBtns('query', 'queryall') : showNavBtns('addrec', 'query', 'queryall');
-		
+
 	// sometimes the cloned header has width problem, so to make sure we always see nice header, we resize it just after creating it
 	resizeTableHeader('data');
 }

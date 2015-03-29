@@ -471,7 +471,7 @@ function responseHandler(data) {
 		setMessage('Error');
 		$('#tab-messages').html(message);
 	}
-	$("#grid-tabs").tabs('select', 2);
+	$("#grid-tabs").tabs("option", "active", 2);
 	div = $('#tab-messages div.sql_text').length > 0 ? $('#tab-messages div.sql_text') : $('#tab-messages div.sql_error');
 	if (div.length) {
 		code = div.html2txt();

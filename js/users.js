@@ -178,7 +178,7 @@ function updateDbPrivilege() {
 
 function addUser() {
 	$('#grid-messages').html('');
-	$('#grid-tabs').tabs('select', 0).tabs('disable', 1).tabs('disable', 2);
+	$('#grid-tabs').tabs("option", "active", 0).tabs('disable', 1).tabs('disable', 2);
 	$('#username,#hostname,#userpass,#userpass2').val('');
 	$('#userlist').attr('disabled', 'disabled');
 	height = '-' + $('#button-list').outerHeight() + 'px';
