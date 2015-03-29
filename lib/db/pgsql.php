@@ -920,11 +920,13 @@ class DB_Pgsql {
 		}
 
 		$row = $this->fetchRow('_temp');
-		$cmd = "CREATE VIEW {$this->quote($fullname)} AS
-			 {$row['createcmd']}";
+		$cmd = "-- View: $name\n \n" .
+			"-- DROP VIEW $name;\n \n" .
+			"CREATE OR REPLACE VIEW $name AS \n" .
+			"{$row['createcmd']}";
 
 		if ($row['comments'] != '') {
-			$cmd = "BEGIN; \n$cmd\nCOMMENT ON VIEW {$this->quote($fullname)} IS '{$this->escape($row['comments'])}';\nEND;";
+			$cmd = "BEGIN; \n$cmd\nCOMMENT ON VIEW $name IS '{$this->escape($row['comments'])}';\nEND;";
 		}
 
 		return $cmd;
