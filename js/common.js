@@ -43,7 +43,7 @@ function getFrame() {
 	if ($.browser.msie && $.browser.version < 9.0)
 		xfrm = document.frames("wrkfrm");
 	else
-		xfrm = window.frames["wrkfrm"];
+		xfrm = window.frames.wrkfrm;
 	return xfrm;
 }
 
@@ -87,17 +87,16 @@ function addCmdHistory(str) {
 	if (m < 10) m = '0'+m;
 	$('#sql-history > tbody:last').append("<tr><td valign=\"top\" class=\"dt\">[" + h + ":" + m + "]</td><td class=\"hst\">" + str + ";</td></tr>");
 
-	if (arguments.length > 1 && arguments[1] == true)
+	if (arguments.length > 1 && arguments[1] === true)
 		currentQuery = str;
 }
 
 function str_replace(search, replace, subject) {
-	var f = search, r = replace, s = "" + subject;
-	var ra = is_array(r), sa = is_array(s), f = [].concat(f), r = [].concat(r), i = (s = [].concat(s)).length;
+	var ra = is_array(r), sa = is_array(s), f = [].concat(search), r = [].concat(replace), i = (s = [].concat("" + subject)).length;
 
 	while (j = 0, i--) {
-		while (s[i] = s[i].split(f[j]).join(ra ? r[j] || "" : r[0]), ++j in f){};
-	};
+		while (s[i] = s[i].split(f[j]).join(ra ? r[j] || "" : r[0]), ++j in f){}
+	}
 
 	return sa ? s : s[0];
 }
@@ -115,12 +114,13 @@ if(!Array.indexOf) {
 			}
 		}
 		return -1;
-	}
+	};
 }
 
 function __(txt) {
-	if (window.lang && window['lang'][txt])
-		return window['lang'][txt];
+	if (window.lang && window.lang[txt]) {
+		return window.lang[txt];
+	}
 	return txt;
 }
 
@@ -238,19 +238,19 @@ function uiShowObjectList(list, name, title, uncheck)
 	}
 
 	html = '';
-	for(i=0; i<list.length; i++)
+	for(var j=0; j<list.length; j++)
 	{
-		table = list[i];
+		table = list[j];
 		id = str_replace(/[\s\"']/, '', table);
 		value = str_replace(/[\"]/, '&quot', table);
-		html += '<div class="obj"><input' + (!uncheck ? ' checked="checked"' : '') + ' type="checkbox" name="' + name + '[]" id="' + name + '_' + id + '" value="'
-				+ value + '" /><label class="right" for="' + name + '_' + id + '">' + table + '</label></div>';
+		html += '<div class="obj"><input' + (!uncheck ? ' checked="checked"' : '') + ' type="checkbox" name="' + name + '[]" id="' + name + '_' + id + '" value="' +
+				value + '" /><label class="right" for="' + name + '_' + id + '">' + table + '</label></div>';
 	}
-	if (html != '')
+	if (html !== '')
 	{
-		html = '<div class="objhead ui-widget-header"><input' + (!uncheck ? ' checked="checked"' : '') + ' type="checkbox" class="selectall" id="h_' + title
-				+ '" /><label class="right" for="h_' + title + '">' + title + '</label><span class="toggler">&#x25B4;</span></div><div>'
-				+ html + '</div>';
+		html = '<div class="objhead ui-widget-header"><input' + (!uncheck ? ' checked="checked"' : '') + ' type="checkbox" class="selectall" id="h_' + title +
+				 '" /><label class="right" for="h_' + title + '">' + title + '</label><span class="toggler">&#x25B4;</span></div><div>' +
+				 html + '</div>';
 		$('#db_objects').append(html);
 	}
 }
