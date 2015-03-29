@@ -90,8 +90,10 @@
 <title>MyWebSQL</title>
 	<link rel="stylesheet" type="text/css" href="cache.php?css=theme,default" />
 	<link rel="SHORTCUT ICON" href="favicon.ico" />
-	<link rel="stylesheet" type="text/css" href="cache.php?css=menu,treeview,results,context,alerts" />
-	<script type="text/javascript" language="javascript" src="cache.php?script=jquery,mobile,<?php echo $DB->name(); ?>"></script>
+	<link rel="stylesheet" type="text/css" href="cache.php?css=menu,results,context,alerts" />
+	<link rel="stylesheet" type="text/css" href="js/jstree/themes/default/style.min.css" />
+	<script type="text/javascript" language="javascript" src="cache.php?script=jquery,jquerymigrate,mobile,<?php echo $DB->name(); ?>"></script>
+	<script src="js/jstree/jstree.min.js"></script>
 	<!--[if lt IE 8]>
 		<script type="text/javascript" language="javascript" src="cache.php?script=json2"></script>
 	<![endif]-->
@@ -274,7 +276,7 @@
 		echo 'document.getElementById("messageContainer").innerHTML = "Connected to: '.DB_HOST.' as '.DB_USER.'";';
 ?>
 </script>
-<script type="text/javascript" language="javascript" src="cache.php?script=layout,ui,dialogs,context,alerts,cookies,select,interface,options,treeview,common,taskbar,settings,query,tables,clipboard"></script>
+<script type="text/javascript" language="javascript" src="cache.php?script=layout,ui,dialogs,context,alerts,cookies,select,interface,options,jstree,common,taskbar,settings,query,tables,clipboard"></script>
 <?php
 	$DB->disconnect();
 
