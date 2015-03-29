@@ -53,6 +53,8 @@
 				<li class="option mysql4 mysql5 mysqli pgsql"><a href="javascript:infoServer()" title="<?php echo __('View server and connection details'); ?>"><?php echo __('Server/Connection Details'); ?></a></li>
 				<li class="option mysql4 mysql5 mysqli pgsql"><a href="javascript:infoVariables()"
 																								 title="<?php echo	__('View server configuration'); ?>"><?php echo __('Server Variables'); ?></a></li>
+
+				<li class="option mysql4 mysql5 mysqli pgsql sqlite sqlite3"><a href="javascript:showInfoPopup()" title=<?php echo __('Show information in popout'); ?>><?php echo __('Information Popup'); ?></a></li>
 				<li class="db"><a href="javascript:infoDatabase()" title="<?php echo __('View current database summary stats'); ?>"><?php echo __('Database Summary'); ?></a></li>
 			</ul>
 		</li>
