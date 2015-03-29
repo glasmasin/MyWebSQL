@@ -99,7 +99,8 @@ function objDefault(item, id, parent) {
 	$(currentTreeItem).removeClass('current');
 	currentTreeItem = $('#'+id);
 	currentTreeItem.addClass('current').find('a').blur();
-	name = parent ? $("#"+parent+" .schmf").text() + "." + currentTreeItem.find('a').text()  : currentTreeItem.find('a').text();
+	name = id.slice(4).replace("_",'.',1);
+	//name = parent ? $("#"+parent+" .schmf").text() + "." + currentTreeItem.find('a').text()  : currentTreeItem.find('a').text();
 	wrkfrmSubmit("showinfo", item, name, "");
 }
 
@@ -308,6 +309,24 @@ function infoDatabase() {
 	wrkfrmSubmit("infodb", "", "", "");
 }
 
+function showInfoPopup() {
+	//get the text for the information panel (a bit convoluted as it needs to keep line breaks)
+	var info_text = $('<div/>')
+				.html($('#info-div .sql_output')
+					.html2txt())
+				.text();
+    var info = $('#info-div');
+    var dialog_options = {position:{my: "left top", at: "left top", of: info}, width:info.width(), height:info.height()};
+	$('<div/>')
+		.append($('<textarea/>')
+			.attr('id', 'info_textarea')
+			.css('flex','1 1 auto')
+			.text(info_text))
+		.css('display','flex')
+		.dialog(dialog_options);
+	$('#info_textarea').focus();
+	$('#info_textarea').select();
+}
 /* used by modules like help and options that have multiple sub sections to display */
 function navigatePage(s, x) {
 	window.location.href = "?q=wrkfrm&type="+s+"&p=" + x;
