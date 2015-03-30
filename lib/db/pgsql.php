@@ -389,12 +389,34 @@ class DB_Pgsql {
 	}
 
 	function getFunctions() {
-		if (!$this->db)
+		if (!$this->db) {
 			return array();
-		$extra = $this->includeStandardObjects ? "" : "WHERE n.nspname NOT LIKE 'pg@_%' ESCAPE '@' AND n.nspname != 'information_schema'";
-		$res = pg_query($this->conn, "SELECT n.nspname, p.proname AS name FROM pg_proc p INNER JOIN pg_namespace n ON p.pronamespace = n.oid LEFT OUTER JOIN pg_roles u ON u.oid = p.proowner $extra ORDER BY p.proname, n.nspname");
-		if (!$res)
+		}
+		$extra = $this->includeStandardObjects ? "" : "AND n.nspname NOT LIKE 'pg@_%' ESCAPE '@' AND n.nspname != 'information_schema'";
+		$query = "SELECT
+	        n.nspname,
+	        p.proname || ' (' || pg_catalog.oidvectortypes(p.proargtypes) || ')' AS proproto,
+			p.oid as prooid,
+	        p.proretset,
+	        pg_catalog.format_type(p.prorettype, NULL) AS proresult,
+	        pg_catalog.oidvectortypes(p.proargtypes) AS proarguments,
+	        pl.lanname AS prolanguage,
+	        pg_catalog.obj_description(p.oid, 'pg_proc') AS procomment,
+	        CASE WHEN p.proretset THEN 'setof ' ELSE '' END || pg_catalog.format_type(p.prorettype, NULL) AS proreturns,
+	        u.usename AS proowner
+		    FROM pg_catalog.pg_proc p
+		        INNER JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+		        INNER JOIN pg_catalog.pg_language pl ON pl.oid = p.prolang
+		        LEFT JOIN pg_catalog.pg_user u ON u.usesysid = p.proowner
+	        WHERE NOT p.proisagg
+	        $extra
+		    ORDER BY p.proname, proresult
+      	";
+		//$res = pg_query($this->conn, "SELECT n.nspname, p.proname AS name FROM pg_proc p INNER JOIN pg_namespace n ON p.pronamespace = n.oid LEFT OUTER JOIN pg_roles u ON u.oid = p.proowner $extra ORDER BY p.proname, n.nspname");
+      	$res = pg_query($this->conn, $query);
+		if (!$res) {
 			return array();
+		}
 		$ret = array();
 		while($row = pg_fetch_array($res)) {
 			$schema = $row[0];
@@ -935,6 +957,8 @@ class DB_Pgsql {
 	protected function getCreateCommandForFunction($fullname)
 	{
 		list($schema, $name) = $this->splitObjectName($fullname);
+		$duplicateIncrement = substr($name,-1);
+		$name =  substr($name, 0, -1);
 		$sql = "SELECT pg_get_functiondef(p.oid) AS definition
                 FROM pg_proc p
                     INNER JOIN pg_namespace n ON p.pronamespace = n.oid
@@ -943,8 +967,10 @@ class DB_Pgsql {
 		if (!$this->query($sql, '_temp') || $this->numRows('_temp') == 0) {
 			return '';
 		}
-
-		$row = $this->fetchRow('_temp');
+		while ( $duplicateIncrement > -1) {
+			$row = $this->fetchRow('_temp');
+			$duplicateIncrement -= 1;
+		}
 		return $row['definition'];
 	}
 
