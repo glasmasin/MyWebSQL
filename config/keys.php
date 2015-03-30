@@ -16,6 +16,7 @@
 		'KEYCODE_SETNULL'        => array('shift+del', "Shift + Del"),    	// sets value to NULL during edit
 		'KEYCODE_QUERY'          => array('ctrl+return', "Ctrl + Enter"), 	// single query
 		'KEYCODE_QUERYALL'       => array('ctrl+shift+return', "Ctrl + Shift + Enter"),	// query all
+		'KEYCODE_SEARCH_SCHEMA'  => array('ctrl+g', "Ctrl + g"),	// query all
 		'KEYCODE_SWITCH_EDITOR1' => array('alt+1', "Alt + 1"),
 		'KEYCODE_SWITCH_EDITOR2' => array('alt+2', "Alt + 2"),
 		'KEYCODE_SWITCH_EDITOR3' => array('alt+3', "Alt + 3"),
@@ -30,8 +31,8 @@
 		'KEYCODE_SETNULL'       => 'closeEditor(true, null)',
 		'KEYCODE_SWITCH_EDITOR1' => 'switchEditor(0)',
 		'KEYCODE_SWITCH_EDITOR2' => 'switchEditor(1)',
-		'KEYCODE_SWITCH_EDITOR3' => 'switchEditor(2)'
-
+		'KEYCODE_SWITCH_EDITOR3' => 'switchEditor(2)',
+		'KEYCODE_SEARCH_SCHEMA' => 'toolsSchemaSearch()'
 	);
 
 	$SIMPLE_KEYS = array(
