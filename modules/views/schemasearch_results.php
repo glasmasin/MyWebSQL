@@ -17,22 +17,24 @@
 				</tr>
 			<?php } ?>
 		</tbody></table>
+		<?php if ($debug) { ?>
+			<section id="queries">
+					<h1><?php echo __('Queries'); ?></h1>
+				<?php foreach($data['queries'] as $query) { ?>
+					<p><?php echo $query; ?></p>
+				<?php } ?>
 
-		<section id="queries">
-				<h1><?php echo __('Queries'); ?></h1>
-			<?php foreach($data['queries'] as $query) { ?>
-				<p><?php echo $query; ?></p>
-			<?php } ?>
-
-		</section>
-		<div class="ui-dialog ui-widget ui-widget-content ui-corner-all" style='position:absolute; top:20px; left:20px; width:95%; height:90%; display:none; flex-direction:column; background-color: white' id="fullDefinition">
-			<div class='close ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' style='flex: 0 0 20px; padding:3px; text-align:right'>
-				<span class="ui-dialog-title" id="ui-dialog-title-function-definition"></span>
-				<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a>
-			</div>
-			<textarea style='flex: 1 1 auto' id="fullDefinition"></textarea>
-		</div>
+			</section>
+		<?php } ?>
 	</div>
+</div>
+
+<div id="fullDefinitionWrapper" class="ui-dialog ui-widget ui-widget-content ui-corner-all" style='position:fixed; top:20px; left:20px; width:95%; height:90%; display:none; flex-direction:column; background-color: white'>
+	<div class='close ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix' style='flex: 0 0 20px; padding:3px; text-align:right'>
+		<span class="ui-dialog-title" id="ui-dialog-title-function-definition"></span>
+		<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button"><span class="ui-icon ui-icon-closethick">close</span></a>
+	</div>
+	<textarea style='flex: 1 1 auto' id="fullDefinition"></textarea>
 </div>
 
 <script type="text/javascript" language='javascript' src="cache.php?script=common,jquery,ui,position,query"></script>
@@ -48,7 +50,7 @@ $(function() {
 		m = $(this).html().match(re);
 	 	for (var i = 0; i < m.length; i++) {
 	 		if (i > max_results - 1) {
-	 			output += "...</br>(" + (m.length - max_results) + " more) ...";
+	 			output += "(" + (m.length - max_results) + " more) ...";
 	 			break;
 	 		}
 	 		output += "..." + m[i].replace(search, "<strong style='font-weight:700'>" + search + "</strong>") + "...</br>";
@@ -60,9 +62,9 @@ $(function() {
 	$('#table_grid tr').click(function() {
 	 	definition = $(this).children().last().find('pre').data().definition;
 	 	name = $(this).find('td:nth-child(2)').html();
-		$('#fullDefinition textarea').text("--- " + name + "\n" + definition);
+		$('#fullDefinitionWrapper textarea').text("--- " + name + "\n" + definition);
 		$("#ui-dialog-title-function-definition").html(name);
-		$('#fullDefinition').css('display', 'flex');
+		$('#fullDefinitionWrapper').css('display', 'flex');
 	});
 	$("#fullDefinition .close").click(function() {
 		$(this).parent().hide();
