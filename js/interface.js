@@ -208,14 +208,7 @@ $(document).ready(function() {
 	$('#screen-wait').remove();
 	$('#wrkfrm').attr('src', 'index.php?q=wrkfrm&type=infoserver');
 
-	$("#object_list").jstree({
-		"plugins":["search"],
-		"search":{"show_only_matches":true},
-		'core':{'data':jsTreeData}})
-	.bind('select_node.jstree', function(evt, data) {
-		var el = $("#" + data.node.id).find('a');
-		eval(el.attr('href'));
-	});
+	createObjectTree(jsTreeData);
 
 	loadUserPreferences();
 	showNavBtns('query', 'queryall');
@@ -234,18 +227,36 @@ function contextHandler() {
 		$("#sql-history").contextMenu('#history-menu');
 	}
 
-	// only update context menus for object list
-	$('#tablelist .odb').contextMenu('#db-menu');
-	$('#tablelist .otable').contextMenu('#table-menu');
-	$('#tablelist .oview').contextMenu('#view-menu');
-	$('#tablelist .oproc').contextMenu('#proc-menu');
-	$('#tablelist .ofunc').contextMenu('#func-menu');
-	$('#tablelist .otrig').contextMenu('#trig-menu');
-	$('#tablelist .oevt').contextMenu('#evt-menu');
-	$('#tablelist .schmf').contextMenu('#schm-menu');
-	$('#tablelist span').filter('.tablef,.viewf,.procf,.funcf,.trigf,.evtf').contextMenu('#object-menu');
+
 }
 
+function createObjectTree(jsTreeData) {
+	$("#object_list").jstree({
+		"plugins":["search"],
+		"search":{"show_only_matches":true},
+		'core':{'data':jsTreeData}})
+	.bind('select_node.jstree', function(evt, data) {
+			var el = $("#" + data.node.id).find('a');
+			eval(el.attr('href'));
+		}
+	)
+	.bind('after_open.jstree', objectTreeContextMenu)
+	;
+}
+function objectTreeContextMenu (node) {
+	// only update context menus for object list
+
+	$('#object_list .odb').contextMenu('#db-menu');
+	$('#object_list .otable').contextMenu('#table-menu');
+	$('#object_list .oview').contextMenu('#view-menu');
+	$('#object_list .oproc').contextMenu('#proc-menu');
+	$('#object_list .ofunc').contextMenu('#func-menu');
+	$('#object_list .otrig').contextMenu('#trig-menu');
+	$('#object_list .oevt').contextMenu('#evt-menu');
+	$('#object_list .schmf').contextMenu('#schm-menu');
+	$('#object_list a').filter('.tablef,.viewf,.procf,.funcf,.trigf,.evtf').contextMenu('#object-menu');
+
+}
 function initClipboard() {
 	$('#sql-history tr').live('hover', function() {
 		historyCurItem = $(this);
@@ -342,18 +353,11 @@ function getDataMenu(m, t, e) {
 }
 
 function objListHandler(data, state) {
-	tree = $(data).find('#objlist').html();
-	if (tree !== '') {
-		$('#object_list').html(tree);
-		$("#object_list").jstree({'core':{'data':jsTreeData}});
-		contextHandler(false);
-		$("#object-filter-text").val("");
-	} else
-		jAlert(__('An error occured while refreshing the object list.'));
+	$("#object_list").jstree('destroy');
+	jsTreeData = JSON.parse(data);
+	createObjectTree(jsTreeData);
 
-	// restore previous tree state
-	for (i = 0; i < state.length; i++)
-		$('#' + state[i] + ' span:first').trigger('click');
+	$("#object-filter-text").val("");
 
 	setPageStatus(false);
 }

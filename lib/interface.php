@@ -60,6 +60,20 @@
 		return view(array($folder.'/dbtree', 'dbtree'), array(), $dblist);
 	}
 
+	function getDatabaseTreeData(&$db, $dblist=array()) {
+		$folder = $db->name();
+		if (getDbName()) {
+			$objects = $db->getObjectList( true );
+			// sort the object listing based on user preferences
+			$sort = Options::get('ui-tables-sort');
+			if ($sort && ( count($objects['tables']) > 1 ) )
+				$objects['tables'] = sortTableListing( $objects['tables'], $sort );
+			return view(array($folder.'/objtreedata', 'objtreedata'), array(), $objects);
+		}
+
+		return view(array($folder.'/dbtree', 'dbtree'), array(), $dblist);
+	}
+
 	function getContextMenusHTML() {
 		return view('menuobjects');
 	}

@@ -92,7 +92,7 @@ function objectsRefresh() {
 	$('#tablelist .expandable').each(function() {
 		state.push($(this).attr('id'));
 	});
-	wrkfrmSubmit('objlist', '', '', '', function(data) { objListHandler(data, state); } );
+	wrkfrmSubmit('objlistdata', '', '', '', function(data) { objListHandler(data, state); } );
 }
 
 function objDefault(item, id, parent) {

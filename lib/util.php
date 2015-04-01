@@ -78,7 +78,7 @@
 
 	function execute_request(&$db) {
 		// do not append or prepend anything to output if we have to download
-		$output = v($_REQUEST["type"]) == 'download' ? false: true;
+		$output = (v($_REQUEST["type"]) == 'download' or v($_REQUEST["type"]) == 'objlistdata') ? false: true;
 
 		if ( $output ) {
 			startForm($db);
@@ -386,7 +386,7 @@
 		if ($numQueries == 1) {
 			$formatted_query = preg_replace("/[\\n|\\r]?[\\n]+/", "<br>", htmlspecialchars($query));
 			print "<div class='sql-text ui-state-default'>".$formatted_query."</div>";
-			
+
 			$warnings = $db->getWarnings();
 			if (count($warnings) > 0) {
 				print '<div class="message ui-state-error">';
