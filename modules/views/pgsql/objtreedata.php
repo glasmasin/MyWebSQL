@@ -122,12 +122,13 @@ class ObjTree
                 'icon' => "jstree-file",
                 "a_attr" => array(
                     'class' => 'o' . $objectType['class'],
+                    'data-parent' => $schema,
                     "href" => 'javascript:objDefault(\'' . $objectType['name'] . '\', \''.$id.'\', \''.$schema_id.'\')')
             );
 
         }
         $nodeCount =count($nodes);
-        $groupby = $objectType['groupby'] ? $objectType['groupby'] : $groupby_rule;
+        $groupby = $objectType['groupby'] ? $objectType['groupby'] : $this->groupby_rule;
         $grouping = new NodeGrouping($groupby);
         $nodes = $grouping->getGroupOutput($nodes);
         return array(
