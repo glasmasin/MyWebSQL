@@ -959,10 +959,7 @@ class DB_Pgsql {
 		list($schema, $name) = $this->splitObjectName($fullname);
 		$duplicateIncrement = substr($name,-1);
 		$name =  substr($name, 0, -1);
-		$sql = "SELECT pg_get_functiondef(p.oid) AS definition
-                FROM pg_proc p
-                    INNER JOIN pg_namespace n ON p.pronamespace = n.oid
-                WHERE p.proname = '{$this->escape($name)}' AND n.nspname='{$this->escape($schema)}'";
+		$sql                = $this->getFunctionInfoQuery($name, $schema);
 
 		if (!$this->query($sql, '_temp') || $this->numRows('_temp') == 0) {
 			return '';
@@ -971,11 +968,58 @@ class DB_Pgsql {
 			$row = $this->fetchRow('_temp');
 			$duplicateIncrement -= 1;
 		}
-		return $row['definition'];
+		$volatile = array('i'=>'IMMUTABLE', 's'=>'STABLE', 'v'=>'VOLATILE');
+		$proproto = $row['proname'] . '(' . $row['proarguments'] . ')';
+		$definition = $row['prosrc'];
+		$definition = preg_replace('/\n.*LANGUAGE .+?\nAS /', " AS\n", $definition);
+		$definition = str_replace('$function$', '$BODY$', $definition);
+		$definition = preg_replace('/\n\n/', "\n \n", $definition);
+		$cmd = "-- Function: {$proproto}\n \n"
+				. "-- DROP FUNCTION {$proproto};\n \n"
+				. "CREATE OR REPLACE FUNCTION {$proproto}\n"
+				. "  RETURNS {$row['proreturn']} AS\n"
+				. "\$BODY\$"
+				. "{$definition}"
+				. "\$BODY\$\n"
+				. "LANGUAGE {$row['prolanguage']} {$volatile[$row['provolatile']]}\n"
+				. "  COST 100;\n"
+				. "ALTER FUNCTION {$proproto}\n"
+				. "  OWNER TO {$row['proowner']};";
+		if (strlen($row['procomment'])>0) {
+			$cmd .= "\nCOMMENT ON FUNCTION {$proproto} IS '{$row['procomment']}';";
+		}
+		return $cmd;
 	}
 
-	protected function getCreateCommandForTrigger($fullname)
-	{
+	protected function getFunctionInfoQuery($name, $schema) {
+		return "SELECT
+			pc.oid AS prooid, proname,
+			pg_get_functiondef(pc.oid) AS pro_definition,
+			pg_catalog.pg_get_userbyid(proowner) AS proowner,
+			nspname as proschema,
+			lanname as prolanguage,
+			procost,
+			prorows,
+			pg_catalog.format_type(prorettype, NULL) as proresult,
+			prosrc,
+			probin,
+			pg_get_function_result(pc.oid) as proreturn,
+			proisstrict,
+			provolatile,
+			prosecdef,
+			pg_get_function_identity_arguments(pc.oid) AS proarguments,
+			pg_catalog.obj_description(pc.oid, 'pg_proc') AS procomment,
+			proconfig
+		FROM
+			pg_catalog.pg_proc pc, pg_catalog.pg_language pl,
+			pg_catalog.pg_namespace pn
+		WHERE
+			pc.proname = '{$this->escape($name)}' AND pn.nspname='{$this->escape($schema)}'
+			AND pc.prolang = pl.oid
+			AND pc.pronamespace = pn.oid
+		ORDER BY pc.proname, pc.oid;";
+	}
+	protected function getCreateCommandForTrigger($fullname) {
 		list($schema, $name) = $this->splitObjectName($fullname);
 
 		$sql = "SELECT pg_get_triggerdef(t.oid, true) AS definition
